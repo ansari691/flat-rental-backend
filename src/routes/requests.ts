@@ -48,11 +48,12 @@ router.put('/:id/status', async (req: AuthRequest, res) => {
     }
 
     const request = await requestService.getRequestById(req.params.id);
-    const property = await propertyService.getPropertyById(request.propertyId.toString());
+    const property = await propertyService.getPropertyById(request.propertyId._id.toString());
     
-    if (property.landlordId.toString() !== req.user!.userId) {
+    if (property.landlordId._id.toString() !== req.user!.userId) {
       return res.status(403).json({ message: 'Not authorized' });
     }
+
 
     const updatedRequest = await requestService.updateRequestStatus(req.params.id, status);
     res.json(updatedRequest);

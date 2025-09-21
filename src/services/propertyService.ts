@@ -75,6 +75,7 @@ export const propertyService = {
       longitude: number;
       radius?: number;
     };
+    available?: boolean;
   }) {
     const query: any = {};
 
@@ -97,6 +98,48 @@ export const propertyService = {
       };
     }
 
+    if(filters?.available){
+      query.available = true;
+    }
+
     return await Property.find(query).populate('landlordId', '-password');
+  },
+
+  async addToShortlist(propertyId: string, userId: string) {
+    const property = await Property.findByIdAndUpdate(
+      propertyId,
+      { $addToSet: { shortlistedBy: userId } },
+      { new: true }
+    );
+    if (!property) {
+      throw new Error('Property not found');
+    }
+    return property;
+  },
+
+  async removeFromShortlist(propertyId: string, userId: string) {
+    const property = await Property.findByIdAndUpdate(
+      propertyId,
+      { $pull: { shortlistedBy: userId } },
+      { new: true }
+    );
+    if (!property) {
+      throw new Error('Property not found');
+    }
+    return property;
+  },
+
+  async isPropertyShortlisted(propertyId: string, userId: string) {
+    const property = await Property.findOne({
+      _id: propertyId,
+      shortlistedBy: userId
+    });
+    return !!property;
+  },
+
+  async getShortlistedProperties(userId: string) {
+    return await Property.find({
+      shortlistedBy: userId
+    }).populate('landlordId', '-password');
   },
 };

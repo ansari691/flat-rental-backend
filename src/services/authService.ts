@@ -17,7 +17,6 @@ export const authService = {
     
     const existingUser = await User.findOne({ email });
 
-    console.log('Existing user check:', existingUser);
     if (existingUser) {
       throw new Error('User already exists');
     }

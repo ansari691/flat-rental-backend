@@ -49,10 +49,14 @@ const propertySchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  shortlistedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdAt: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
 propertySchema.index({ location: '2dsphere' });
